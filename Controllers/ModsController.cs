@@ -1,10 +1,11 @@
 ﻿using GraphQL.AspNet.Attributes;
+using GraphQL.AspNet.Controllers;
 using ModStats.API.Database;
 using ModStats.API.Models.Mods;
 
 namespace ModStats.API.Controllers;
 
-public class ModsController
+public class ModsController : GraphController
 {
     private readonly AppDbContext _dbContext;
     
