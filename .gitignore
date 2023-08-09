@@ -3,6 +3,7 @@ bin/
 obj/
 /packages/
 *.DotSettings.user
+appsettings.Development.json
 
 # Visual Studio Code
 .vscode/
@@ -16,3 +17,4 @@ riderModule.iml
 # Misc
 .data/
 .tmp/
+
