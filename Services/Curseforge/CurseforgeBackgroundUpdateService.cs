@@ -7,7 +7,7 @@ namespace ModStats.API.Services.Curseforge;
 
 public class CurseforgeBackgroundUpdateService : DelayedService<CurseforgeBackgroundUpdateService>
 {
-    private static readonly TimeSpan Delay = TimeSpan.FromHours(24);
+    private static readonly TimeSpan Delay = TimeSpan.FromHours(6);
     private static readonly TimeSpan StartupDelay = TimeSpan.FromSeconds(10);
 
     public CurseforgeBackgroundUpdateService(IServiceProvider serviceProvider, ILoggerFactory loggerFactory) : base(serviceProvider, loggerFactory, Delay, StartupDelay)
