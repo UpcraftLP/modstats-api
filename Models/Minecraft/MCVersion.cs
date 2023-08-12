@@ -11,13 +11,13 @@ public class McVersion
     [Key]
     [Required]
     [JsonPropertyName("id")]
-    public string Id { get; set; }
+    public string Id { get; set; } = null!;
     
     [JsonPropertyName("type")]
     public McVersionType Type { get; set; }
     
     [JsonPropertyName("url")]
-    public Uri Url { get; set; }
+    public Uri Url { get; set; } = null!;
     
     [JsonPropertyName("time")]
     public DateTime Time { get; set; }
@@ -26,10 +26,10 @@ public class McVersion
     public DateTime ReleaseTime { get; set; }
     
     [JsonPropertyName("sha1")]
-    public string Sha1 { get; set; }
+    public string Sha1 { get; set; } = null!;
     
     [JsonPropertyName("complianceLevel")]
-    public int ComplianceLevel { get; set; } = 0;
+    public int ComplianceLevel { get; set; }
 }
 
 [JsonConverter(typeof(McVersionTypeConverter))]

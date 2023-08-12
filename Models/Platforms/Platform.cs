@@ -6,9 +6,6 @@ namespace ModStats.API.Models.Platforms;
 [Table("platforms")]
 public class Platform : BaseModel
 {
-    [Required]
-    public string Slug { get; set; }
-    
-    [Required]
-    public string Name { get; set; }
+    public string Slug { get; set; } = null!;
+    public string Name { get; set; } = null!;
 }

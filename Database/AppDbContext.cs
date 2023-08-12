@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ModStats.API.Models.Minecraft;
 using ModStats.API.Models.Mods;
+using ModStats.API.Models.Mods.Loaders;
 using ModStats.API.Models.Platforms;
 
 namespace ModStats.API.Database;
@@ -12,10 +13,14 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<ModLoader> ModLoaders { get; set; } = null!;
+    
     public DbSet<Platform> Platforms { get; set; } = null!;
+    
     public DbSet<McVersion> MinecraftVersions { get; set; } = null!;
+    
     public DbSet<Mod> Mods { get; set; } = null!;
-    public DbSet<DisplayInfo> ModDisplayInfo { get; set; } = null!;
+    public DbSet<ModMetadata> ModsDisplayInfo { get; set; } = null!;
+    public DbSet<ModSupportedPlatform> ModsSupportedPlatforms { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -70,6 +75,12 @@ public class AppDbContext : DbContext
         );
         
         modelBuilder.Entity<Mod>().HasIndex(it => it.Slug).IsUnique();
-        modelBuilder.Entity<Mod>().HasOne(it => it.Display).WithOne(it => it.Mod).HasForeignKey<DisplayInfo>(it => it.ModId);
+        modelBuilder.Entity<ModMetadata>().HasOne(it => it.Mod).WithOne(it => it.Meta).HasForeignKey<ModMetadata>(it => it.ModId).IsRequired();
+        modelBuilder.Entity<ModSupportedPlatform>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
+        modelBuilder.Entity<ModSupportedPlatform>().HasOne(it => it.Mod).WithMany(it => it.PlatformIDs).HasForeignKey(it => it.ModId);
+        // modelBuilder.Entity<Mod>().HasOne(it => it.Meta).WithOne(it => it.Mod).HasForeignKey<ModMetadata>(it => it.ModId);
+        // modelBuilder.Entity<Mod>().HasMany(it => it.PlatformIDs).WithOne(it => it.Mod).HasForeignKey(it => it.ModId);
+        // modelBuilder.Entity<ModSupportedPlatform>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
+        modelBuilder.Entity<ModSupportedPlatform>().HasKey(it => new {it.PlatformId, it.PlatformKey});
     }
 }
