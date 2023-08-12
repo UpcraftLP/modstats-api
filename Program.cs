@@ -10,8 +10,28 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddLogging();
 builder.Services.AddHttpClient();
-builder.Services.AddGraphQL();
-builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+builder.Services.AddGraphQL(options =>
+{
+    options.ExecutionOptions.MaxQueryDepth = 20;
+});
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseLazyLoadingProxies();
+    var connString = builder.Configuration.GetConnectionString("Postgres") ?? throw new Exception("No connection string found!");
+    if (builder.Environment.IsDevelopment() && !connString.Contains("Include Error Detail"))
+    {
+        if (!connString.EndsWith(';'))
+        {
+            connString += ';';
+        }
+        connString += "Include Error Detail=true;";
+    }
+    var contextBuilder = options.UseNpgsql(connString);
+    if (builder.Environment.IsDevelopment())
+    {
+        contextBuilder.EnableSensitiveDataLogging();
+    }
+});
 builder.Services.AddTransient<ApiClient>(_ =>
 {
     var config = builder.Configuration.GetSection(CurseForgeConfig.SectionName).Get<CurseForgeConfig>()!;
