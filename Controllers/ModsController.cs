@@ -62,8 +62,9 @@ public class ModsController : GraphController
     public async Task<int> DeleteMod(Guid modid)
     {
         var count = 0;
+        count += await _dbContext.HistDownloadCounts.Where(it => it.ModId == modid).ExecuteDeleteAsync();
         count += await _dbContext.ModsSupportedPlatforms.Where(it => it.ModId == modid).ExecuteDeleteAsync();
-        count += await _dbContext.ModsDisplayInfo.Where(it => it.ModId == modid).ExecuteDeleteAsync();
+        count += await _dbContext.ModsMetaData.Where(it => it.ModId == modid).ExecuteDeleteAsync();
         count += await _dbContext.Mods.Where(it => it.Id == modid).ExecuteDeleteAsync();
         count += await _dbContext.SaveChangesAsync();
         return count;

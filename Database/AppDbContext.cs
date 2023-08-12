@@ -20,7 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<McVersion> MinecraftVersions { get; set; } = null!;
     
     public DbSet<Mod> Mods { get; set; } = null!;
-    public DbSet<ModMetadata> ModsDisplayInfo { get; set; } = null!;
+    public DbSet<ModMetadata> ModsMetaData { get; set; } = null!;
     public DbSet<ModSupportedPlatform> ModsSupportedPlatforms { get; set; } = null!;
     
     public DbSet<DownloadCountSnapshot> HistDownloadCounts { get; set; } = null!;
