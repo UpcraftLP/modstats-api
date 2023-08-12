@@ -42,8 +42,10 @@ builder.Services.AddTransient<ApiClient>(_ =>
     return new ApiClient(config.ApiKey, config.PartnerId, config.ContactEmail);
 });
 builder.Services.AddScoped<IMcVersionService, McVersionService>();
+builder.Services.AddScoped<ICurseforgeUpdateService, CurseforgeUpdateService>();
 builder.Services.AddTransient<IDataInitService, DataInitService>();
 builder.Services.AddHostedService<FetchMcMetaService>();
+builder.Services.AddHostedService<CurseforgeBackgroundUpdateService>();
 
 var app = builder.Build();
 app.UseAuthorization();

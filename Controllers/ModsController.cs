@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ModStats.API.Database;
 using ModStats.API.DataTransfer.Mods;
 using ModStats.API.Models.Mods;
+using ModStats.API.Services;
 using ModStats.API.Util.Auth;
 
 namespace ModStats.API.Controllers;
@@ -11,28 +12,23 @@ namespace ModStats.API.Controllers;
 public class ModsController : GraphController
 {
     private readonly AppDbContext _dbContext;
+    private readonly ICurseforgeUpdateService _cfService;
 
-    public ModsController(AppDbContext dbContext)
+    public ModsController(AppDbContext dbContext, ICurseforgeUpdateService cfService)
     {
         _dbContext = dbContext;
+        _cfService = cfService;
     }
 
     [QueryRoot("mods")]
     public IQueryable<Mod> GetMods()
     {
-        // foreach (var modSupportedPlatforms in _dbContext.Mods.Select(it => it.PlatformIDs))
-        // {
-        //     foreach (var platform in modSupportedPlatforms)
-        //     {
-        //         Console.WriteLine("{2} Platform: {0}:{1}", platform.Platform.Name, platform.PlatformKey, platform.Mod);
-        //     }
-        // }
         return _dbContext.Mods.AsQueryable();
     }
 
     [ApiKey]
     [MutationRoot("addMod")]
-    public async Task<Mod> AddMod(AddModsInput mod)
+    public async Task<Mod> AddMod(AddModsInput mod, CancellationToken cancellationToken = default)
     {
         var platforms = mod.SupportedPlatforms.Select(it => new ModSupportedPlatform()
         {
@@ -53,7 +49,10 @@ public class ModsController : GraphController
         
         _dbContext.Mods.Add(result);
         _dbContext.ModsSupportedPlatforms.AddRange(platforms);
-        await _dbContext.SaveChangesAsync();
+
+        await _cfService.UpdateDownloadCounts(result.Id, cancellationToken);
+        
+        await _dbContext.SaveChangesAsync(cancellationToken);
         
         return result;
     }

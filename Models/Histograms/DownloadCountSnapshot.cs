@@ -1,21 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using ModStats.API.Models.Mods;
 using ModStats.API.Models.Platforms;
 
-namespace ModStats.API.Models.Mods;
+namespace ModStats.API.Models.Histograms;
 
-[Table("mods_supported_platforms")]
-public class ModSupportedPlatform : BaseModel
+[Table("hist_download_count")]
+public class DownloadCountSnapshot : Snapshot<double>
 {
-    //FK: Mod
     public Guid ModId { get; set; }
     public virtual Mod Mod { get; set; } = null!;
     
-    //FK: Platform
     public Guid PlatformId { get; set; }
     public virtual Platform Platform { get; set; } = null!;
-    
-    // name on the platform
-    public string PlatformKey { get; set; } = null!;
-
-    public double DownloadCount { get; set; } = 0;
 }

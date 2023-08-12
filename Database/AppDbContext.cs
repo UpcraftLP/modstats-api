@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ModStats.API.Models.Histograms;
 using ModStats.API.Models.Minecraft;
 using ModStats.API.Models.Mods;
 using ModStats.API.Models.Mods.Loaders;
@@ -21,6 +22,8 @@ public class AppDbContext : DbContext
     public DbSet<Mod> Mods { get; set; } = null!;
     public DbSet<ModMetadata> ModsDisplayInfo { get; set; } = null!;
     public DbSet<ModSupportedPlatform> ModsSupportedPlatforms { get; set; } = null!;
+    
+    public DbSet<DownloadCountSnapshot> HistDownloadCounts { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -78,9 +81,9 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ModMetadata>().HasOne(it => it.Mod).WithOne(it => it.Meta).HasForeignKey<ModMetadata>(it => it.ModId).IsRequired();
         modelBuilder.Entity<ModSupportedPlatform>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
         modelBuilder.Entity<ModSupportedPlatform>().HasOne(it => it.Mod).WithMany(it => it.PlatformIDs).HasForeignKey(it => it.ModId);
-        // modelBuilder.Entity<Mod>().HasOne(it => it.Meta).WithOne(it => it.Mod).HasForeignKey<ModMetadata>(it => it.ModId);
-        // modelBuilder.Entity<Mod>().HasMany(it => it.PlatformIDs).WithOne(it => it.Mod).HasForeignKey(it => it.ModId);
-        // modelBuilder.Entity<ModSupportedPlatform>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
         modelBuilder.Entity<ModSupportedPlatform>().HasKey(it => new {it.PlatformId, it.PlatformKey});
+
+        modelBuilder.Entity<DownloadCountSnapshot>().HasOne(it => it.Mod).WithMany(it => it.HistoricalDownloadData).HasForeignKey(it => it.ModId).IsRequired();
+        modelBuilder.Entity<DownloadCountSnapshot>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
     }
 }

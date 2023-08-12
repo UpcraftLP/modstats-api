@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using ModStats.API.Models.Histograms;
 using ModStats.API.Models.Minecraft;
 using ModStats.API.Models.Platforms;
 
@@ -16,4 +17,9 @@ public class Mod : BaseModel
 
     [NotMapped]
     public virtual IEnumerable<Platform> SupportedPlatforms => PlatformIDs.Select(it => it.Platform);
+    
+    [NotMapped]
+    public virtual double TotalDownloadCount => PlatformIDs.Sum(it => it.DownloadCount);
+    
+    public virtual ICollection<DownloadCountSnapshot> HistoricalDownloadData { get; set; } = new List<DownloadCountSnapshot>();
 }
