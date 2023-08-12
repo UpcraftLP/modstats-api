@@ -24,6 +24,7 @@ public class AppDbContext : DbContext
     public DbSet<ModSupportedPlatform> ModsSupportedPlatforms { get; set; } = null!;
     
     public DbSet<DownloadCountSnapshot> HistDownloadCounts { get; set; } = null!;
+    public DbSet<SupportedVersionsSnapshot> HistSupportedVersions { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -85,5 +86,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<DownloadCountSnapshot>().HasOne(it => it.Mod).WithMany(it => it.HistoricalDownloadData).HasForeignKey(it => it.ModId).IsRequired();
         modelBuilder.Entity<DownloadCountSnapshot>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
+
+        modelBuilder.Entity<SupportedVersionsSnapshot>().HasOne(it => it.Mod).WithMany(it => it.HistoricalSupportedVersionsData).HasForeignKey(it => it.ModId).IsRequired();
+        modelBuilder.Entity<SupportedVersionsSnapshot>().HasOne(it => it.Platform).WithMany().HasForeignKey(it => it.PlatformId).IsRequired();
     }
 }

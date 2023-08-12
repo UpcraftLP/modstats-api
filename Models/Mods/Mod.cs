@@ -22,4 +22,5 @@ public class Mod : BaseModel
     public virtual double TotalDownloadCount => PlatformIDs.Sum(it => it.DownloadCount);
     
     public virtual ICollection<DownloadCountSnapshot> HistoricalDownloadData { get; set; } = new List<DownloadCountSnapshot>();
+    public virtual ICollection<SupportedVersionsSnapshot> HistoricalSupportedVersionsData { get; set; } = new List<SupportedVersionsSnapshot>();
 }

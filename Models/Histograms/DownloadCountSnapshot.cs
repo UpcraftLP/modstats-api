@@ -5,11 +5,7 @@ using ModStats.API.Models.Platforms;
 namespace ModStats.API.Models.Histograms;
 
 [Table("hist_download_count")]
-public class DownloadCountSnapshot : Snapshot<double>
+public class DownloadCountSnapshot : Snapshot
 {
-    public Guid ModId { get; set; }
-    public virtual Mod Mod { get; set; } = null!;
-    
-    public Guid PlatformId { get; set; }
-    public virtual Platform Platform { get; set; } = null!;
+    public double Data { get; set; } = 0;
 }

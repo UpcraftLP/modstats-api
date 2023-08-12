@@ -27,7 +27,7 @@ public class CurseforgeUpdateService : ICurseforgeUpdateService
     public async Task UpdateDownloadCounts(Guid modId, CancellationToken cancellationToken = default)
     {
         var cfPlatform = await _dbContext.Platforms.Where(it => it.Slug == "curseforge").FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Curseforge platform not found");
-        var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
+        var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.SupportedVersions).ThenInclude(it => it.Id).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
         var toUpdate = mod.PlatformIDs.Where(it => it.Platform == cfPlatform).ToList();
 
         await UpdateCurseforgeData(_dbContext, _cfApiClient, cfPlatform, toUpdate, cancellationToken);
@@ -42,22 +42,43 @@ public class CurseforgeUpdateService : ICurseforgeUpdateService
 
         foreach (var data in response.Data)
         {
-            //TODO error handling?
-            if (data == null) continue;
-
             var platformData = toUpdate.FirstOrDefault(it => it.PlatformKey == data.Id.ToString());
             if (platformData == null) continue;
+            
+            platformData.DownloadCount = data.DownloadCount;
+            dbContext.Update(platformData);
 
-            var snapshot = new DownloadCountSnapshot
+            var downloadCountSnapshot = new DownloadCountSnapshot
             {
                 Data = data.DownloadCount,
                 Mod = platformData.Mod,
                 Platform = curseforgePlatform,
             };
-            await dbContext.AddAsync(snapshot, cancellationToken);
+            await dbContext.AddAsync(downloadCountSnapshot, cancellationToken);
 
-            platformData.DownloadCount = data.DownloadCount;
-            dbContext.Update(platformData);
+            var versionNames = new HashSet<string>();
+            foreach (var fileSortableGameVersion in data.LatestFiles.SelectMany(file => file.SortableGameVersions))
+            {
+                versionNames.Add(fileSortableGameVersion.GameVersion);
+            }
+            foreach (var versionName in versionNames)
+            {
+                var version = await dbContext.MinecraftVersions.Where(it => it.Id == versionName).FirstOrDefaultAsync(cancellationToken);
+                if (version == null || platformData.Mod.SupportedVersions.Contains(version))
+                {
+                    continue;
+                }
+                platformData.Mod.SupportedVersions.Add(version);
+            }
+            dbContext.Update(platformData.Mod);
+            
+            var supportedVersionsSnapshot = new SupportedVersionsSnapshot
+            {
+                Data = platformData.Mod.SupportedVersions.ToList(),
+                Mod = platformData.Mod,
+                Platform = curseforgePlatform,
+            };
+            await dbContext.AddAsync(supportedVersionsSnapshot, cancellationToken);
         }
         await dbContext.SaveChangesAsync(cancellationToken);
     }
