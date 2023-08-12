@@ -3,6 +3,7 @@ using GraphQL.AspNet.Configuration;
 using Microsoft.EntityFrameworkCore;
 using ModStats.API.Database;
 using ModStats.API.Services;
+using ModStats.API.Util.Auth;
 using ModStats.API.Util.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,9 @@ builder.Services.AddGraphQL(options =>
 {
     options.ExecutionOptions.MaxQueryDepth = 20;
 });
+builder.Services.AddAuthorization();
+builder.Services.AddSingleton<ApiKeyAuthorizationFilter>();
+builder.Services.AddSingleton<IApiKeyValidator, ApiKeyValidator>();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseLazyLoadingProxies();
@@ -42,6 +46,7 @@ builder.Services.AddTransient<IDataInitService, DataInitService>();
 builder.Services.AddHostedService<FetchMcMetaService>();
 
 var app = builder.Build();
+app.UseAuthorization();
 app.UseGraphQL();
 
 Init(app).Wait();
