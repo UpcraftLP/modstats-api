@@ -3,6 +3,8 @@ using GraphQL.AspNet.Configuration;
 using Microsoft.EntityFrameworkCore;
 using ModStats.API.Database;
 using ModStats.API.Services;
+using ModStats.API.Services.Curseforge;
+using ModStats.API.Services.Mojang;
 using ModStats.API.Util.Auth;
 using ModStats.API.Util.Config;
 

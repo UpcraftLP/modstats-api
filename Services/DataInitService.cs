@@ -1,4 +1,6 @@
-﻿namespace ModStats.API.Services;
+﻿using ModStats.API.Services.Mojang;
+
+namespace ModStats.API.Services;
 
 public interface IDataInitService
 {

@@ -5,6 +5,7 @@ using ModStats.API.Database;
 using ModStats.API.DataTransfer.Mods;
 using ModStats.API.Models.Mods;
 using ModStats.API.Services;
+using ModStats.API.Services.Curseforge;
 using ModStats.API.Util.Auth;
 
 namespace ModStats.API.Controllers;

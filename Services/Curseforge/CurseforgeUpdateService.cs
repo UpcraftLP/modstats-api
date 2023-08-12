@@ -6,7 +6,7 @@ using ModStats.API.Models.Histograms;
 using ModStats.API.Models.Mods;
 using ModStats.API.Models.Platforms;
 
-namespace ModStats.API.Services;
+namespace ModStats.API.Services.Curseforge;
 
 public interface ICurseforgeUpdateService
 {

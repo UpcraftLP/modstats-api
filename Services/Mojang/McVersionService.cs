@@ -1,7 +1,7 @@
 ﻿using ModStats.API.Database;
 using ModStats.API.Util.Minecraft;
 
-namespace ModStats.API.Services;
+namespace ModStats.API.Services.Mojang;
 
 public interface IMcVersionService
 {

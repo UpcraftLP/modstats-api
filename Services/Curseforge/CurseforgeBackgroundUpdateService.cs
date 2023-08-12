@@ -1,13 +1,9 @@
 ﻿using CurseForge.APIClient;
-using CurseForge.APIClient.Models.Mods;
 using Microsoft.EntityFrameworkCore;
 using ModStats.API.Database;
-using ModStats.API.Models.Histograms;
-using ModStats.API.Models.Mods;
-using ModStats.API.Models.Platforms;
 using ModStats.API.Util;
 
-namespace ModStats.API.Services;
+namespace ModStats.API.Services.Curseforge;
 
 public class CurseforgeBackgroundUpdateService : DelayedService<CurseforgeBackgroundUpdateService>
 {

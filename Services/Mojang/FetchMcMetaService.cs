@@ -1,6 +1,6 @@
 ﻿using ModStats.API.Util;
 
-namespace ModStats.API.Services;
+namespace ModStats.API.Services.Mojang;
 
 public class FetchMcMetaService : DelayedService<FetchMcMetaService>
 {
