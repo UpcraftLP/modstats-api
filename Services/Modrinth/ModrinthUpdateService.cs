@@ -53,5 +53,6 @@ public class ModrinthUpdateService : IModrinthUpdateService
             platformData.DownloadCount = data.Downloads;
             dbContext.Update(platformData);
         }
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

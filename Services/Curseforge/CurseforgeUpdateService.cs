@@ -59,5 +59,6 @@ public class CurseforgeUpdateService : ICurseforgeUpdateService
             platformData.DownloadCount = data.DownloadCount;
             dbContext.Update(platformData);
         }
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

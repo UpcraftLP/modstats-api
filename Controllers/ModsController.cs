@@ -52,12 +52,11 @@ public class ModsController : GraphController
         
         _dbContext.Mods.Add(result);
         _dbContext.ModsSupportedPlatforms.AddRange(platforms);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         await _modrinth.UpdateDownloadCounts(result.Id, cancellationToken);
         await _curseforge.UpdateDownloadCounts(result.Id, cancellationToken);
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        
         return result;
     }
 
