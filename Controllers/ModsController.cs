@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using ModStats.API.Database;
 using ModStats.API.DataTransfer.Mods;
 using ModStats.API.Models.Mods;
-using ModStats.API.Services;
 using ModStats.API.Services.Curseforge;
+using ModStats.API.Services.Modrinth;
 using ModStats.API.Util.Auth;
 
 namespace ModStats.API.Controllers;
@@ -13,12 +13,14 @@ namespace ModStats.API.Controllers;
 public class ModsController : GraphController
 {
     private readonly AppDbContext _dbContext;
-    private readonly ICurseforgeUpdateService _cfService;
+    private readonly ICurseforgeUpdateService _curseforge;
+    private readonly IModrinthUpdateService _modrinth;
 
-    public ModsController(AppDbContext dbContext, ICurseforgeUpdateService cfService)
+    public ModsController(AppDbContext dbContext, ICurseforgeUpdateService curseforge, IModrinthUpdateService modrinth)
     {
         _dbContext = dbContext;
-        _cfService = cfService;
+        _curseforge = curseforge;
+        _modrinth = modrinth;
     }
 
     [QueryRoot("mods")]
@@ -51,8 +53,9 @@ public class ModsController : GraphController
         _dbContext.Mods.Add(result);
         _dbContext.ModsSupportedPlatforms.AddRange(platforms);
 
-        await _cfService.UpdateDownloadCounts(result.Id, cancellationToken);
-        
+        await _modrinth.UpdateDownloadCounts(result.Id, cancellationToken);
+        await _curseforge.UpdateDownloadCounts(result.Id, cancellationToken);
+
         await _dbContext.SaveChangesAsync(cancellationToken);
         
         return result;

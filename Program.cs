@@ -6,6 +6,7 @@ using Modrinth;
 using ModStats.API.Database;
 using ModStats.API.Services;
 using ModStats.API.Services.Curseforge;
+using ModStats.API.Services.Modrinth;
 using ModStats.API.Services.Mojang;
 using ModStats.API.Util.Auth;
 using ModStats.API.Util.Config;
@@ -49,8 +50,8 @@ builder.Services.AddTransient<ModrinthClient>(a =>
 {
     var config = builder.Configuration.GetSection(ModrinthConfig.SectionName).Get<ModrinthConfig>()!;
     var assemblyInfo = Assembly.GetEntryAssembly()!.GetName();
-    var userAgentString = $"{assemblyInfo.FullName}/{assemblyInfo.Version} ({config.ContactEmail})";
-    return new ModrinthClient(new ModrinthClientConfig()
+    var userAgentString = $"{assemblyInfo.Name}/{assemblyInfo.Version} ({config.ContactEmail})";
+    return new ModrinthClient(new ModrinthClientConfig
     {
         ModrinthToken = config.ApiKey,
         UserAgent = userAgentString,
@@ -58,9 +59,11 @@ builder.Services.AddTransient<ModrinthClient>(a =>
 });
 builder.Services.AddScoped<IMcVersionService, McVersionService>();
 builder.Services.AddScoped<ICurseforgeUpdateService, CurseforgeUpdateService>();
+builder.Services.AddScoped<IModrinthUpdateService, ModrinthUpdateService>();
 builder.Services.AddTransient<IDataInitService, DataInitService>();
 builder.Services.AddHostedService<FetchMcMetaService>();
 builder.Services.AddHostedService<CurseforgeBackgroundUpdateService>();
+builder.Services.AddHostedService<ModrinthBackgroundUpdateService>();
 
 var app = builder.Build();
 app.UseAuthorization();

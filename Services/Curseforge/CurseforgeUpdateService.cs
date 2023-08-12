@@ -30,10 +30,10 @@ public class CurseforgeUpdateService : ICurseforgeUpdateService
         var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
         var toUpdate = mod.PlatformIDs.Where(it => it.Platform == cfPlatform).ToList();
 
-        await UpdateCfData(_dbContext, _cfApiClient, cfPlatform, toUpdate, cancellationToken);
+        await UpdateCurseforgeData(_dbContext, _cfApiClient, cfPlatform, toUpdate, cancellationToken);
 
     }
-    public static async Task UpdateCfData(AppDbContext dbContext, ApiClient cfApiClient, Platform curseforgePlatform, IReadOnlyCollection<ModSupportedPlatform> toUpdate, CancellationToken cancellationToken = default)
+    public static async Task UpdateCurseforgeData(AppDbContext dbContext, ApiClient cfApiClient, Platform curseforgePlatform, IReadOnlyCollection<ModSupportedPlatform> toUpdate, CancellationToken cancellationToken = default)
     {
         var response = await cfApiClient.GetModsByIdListAsync(new GetModsByIdsListRequestBody()
         {
