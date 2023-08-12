@@ -1,6 +1,8 @@
+using System.Reflection;
 using CurseForge.APIClient;
 using GraphQL.AspNet.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Modrinth;
 using ModStats.API.Database;
 using ModStats.API.Services;
 using ModStats.API.Services.Curseforge;
@@ -42,6 +44,17 @@ builder.Services.AddTransient<ApiClient>(_ =>
 {
     var config = builder.Configuration.GetSection(CurseForgeConfig.SectionName).Get<CurseForgeConfig>()!;
     return new ApiClient(config.ApiKey, config.PartnerId, config.ContactEmail);
+});
+builder.Services.AddTransient<ModrinthClient>(a =>
+{
+    var config = builder.Configuration.GetSection(ModrinthConfig.SectionName).Get<ModrinthConfig>()!;
+    var assemblyInfo = Assembly.GetEntryAssembly()!.GetName();
+    var userAgentString = $"{assemblyInfo.FullName}/{assemblyInfo.Version} ({config.ContactEmail})";
+    return new ModrinthClient(new ModrinthClientConfig()
+    {
+        ModrinthToken = config.ApiKey,
+        UserAgent = userAgentString,
+    });
 });
 builder.Services.AddScoped<IMcVersionService, McVersionService>();
 builder.Services.AddScoped<ICurseforgeUpdateService, CurseforgeUpdateService>();
