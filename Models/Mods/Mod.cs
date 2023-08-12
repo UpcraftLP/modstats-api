@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using GraphQL.AspNet.Attributes;
 using ModStats.API.Models.Minecraft;
 using ModStats.API.Models.Platforms;
 

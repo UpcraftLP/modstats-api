@@ -2,7 +2,6 @@
 using GraphQL.AspNet.Controllers;
 using ModStats.API.Database;
 using ModStats.API.Models.Minecraft;
-using ModStats.API.Models.Mods;
 using ModStats.API.Models.Mods.Loaders;
 using ModStats.API.Models.Platforms;
 
