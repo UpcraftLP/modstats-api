@@ -26,7 +26,7 @@ public class ModrinthUpdateService : IModrinthUpdateService
     public async Task UpdateDownloadCounts(Guid modId, CancellationToken cancellationToken = default)
     {
         var mrPlatform = await _dbContext.Platforms.Where(it => it.Slug == "modrinth").FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Modrinth platform not found");
-        var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.SupportedVersions).ThenInclude(it => it.Id).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
+        var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.SupportedVersions).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
         var toUpdate = mod.PlatformIDs.Where(it => it.Platform == mrPlatform).ToList();
 
         await UpdateModrinthData(_dbContext, _modrinthClient, mrPlatform, toUpdate, cancellationToken);

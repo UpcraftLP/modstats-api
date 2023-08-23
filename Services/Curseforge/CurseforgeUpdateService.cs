@@ -27,7 +27,7 @@ public class CurseforgeUpdateService : ICurseforgeUpdateService
     public async Task UpdateDownloadCounts(Guid modId, CancellationToken cancellationToken = default)
     {
         var cfPlatform = await _dbContext.Platforms.Where(it => it.Slug == "curseforge").FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Curseforge platform not found");
-        var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.SupportedVersions).ThenInclude(it => it.Id).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
+        var mod = await _dbContext.Mods.Where(it => it.Id == modId).Include(it => it.SupportedVersions).Include(it => it.PlatformIDs).ThenInclude(supportedPlatform => supportedPlatform.Platform).FirstOrDefaultAsync(cancellationToken) ?? throw new Exception("Mod not found with Id " + modId);
         var toUpdate = mod.PlatformIDs.Where(it => it.Platform == cfPlatform).ToList();
 
         await UpdateCurseforgeData(_dbContext, _cfApiClient, cfPlatform, toUpdate, cancellationToken);

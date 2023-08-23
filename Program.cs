@@ -46,7 +46,7 @@ builder.Services.AddTransient<ApiClient>(_ =>
     var config = builder.Configuration.GetSection(CurseForgeConfig.SectionName).Get<CurseForgeConfig>()!;
     return new ApiClient(config.ApiKey, config.PartnerId, config.ContactEmail);
 });
-builder.Services.AddTransient<ModrinthClient>(a =>
+builder.Services.AddTransient<ModrinthClient>(_ =>
 {
     var config = builder.Configuration.GetSection(ModrinthConfig.SectionName).Get<ModrinthConfig>()!;
     var assemblyInfo = Assembly.GetEntryAssembly()!.GetName();
