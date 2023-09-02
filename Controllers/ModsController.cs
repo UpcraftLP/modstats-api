@@ -1,12 +1,15 @@
-﻿using GraphQL.AspNet.Attributes;
+﻿using System.Diagnostics;
+using GraphQL.AspNet.Attributes;
 using GraphQL.AspNet.Controllers;
 using Microsoft.EntityFrameworkCore;
+using ModStats.API.Controllers.Filters;
 using ModStats.API.Database;
 using ModStats.API.DataTransfer.Mods;
 using ModStats.API.Models.Mods;
 using ModStats.API.Services.Curseforge;
 using ModStats.API.Services.Modrinth;
 using ModStats.API.Util.Auth;
+using ModStats.API.Util.GraphQL;
 
 namespace ModStats.API.Controllers;
 
@@ -24,9 +27,23 @@ public class ModsController : GraphController
     }
 
     [QueryRoot("mods")]
-    public IQueryable<Mod> GetMods()
+    public IQueryable<Mod> GetMods(GetModsFilter? filter, Order order = Order.Asc)
     {
-        return _dbContext.Mods.AsQueryable();
+        IQueryable<Mod> query = _dbContext.Mods;
+        if(filter?.Slug != null)
+            query = query.Where(it => it.Slug == filter.Slug);
+        if (filter?.Id != null)
+            query = query.Where(it => it.PlatformIDs.Any(pl => pl.PlatformKey == filter.Id));
+        if(filter?.Platforms != null)
+            query = query.Where(it => it.SupportedPlatforms.Any(pl => filter.Platforms.Contains(pl.Slug)));
+        if(filter?.SupportedVersions != null)
+            query = query.Where(it => it.SupportedVersions.Any(ver => filter.SupportedVersions.Contains(ver.Id)));
+        return order switch
+        {
+            Order.Asc => query.OrderBy(it => it.Slug),
+            Order.Desc => query.OrderByDescending(it => it.Slug),
+            var _ => throw new ArgumentOutOfRangeException(nameof(order), order, null),
+        };
     }
 
     [ApiKey]
