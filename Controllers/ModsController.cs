@@ -41,7 +41,7 @@ public class ModsController : GraphController
 
         var result = new Mod()
         {
-            Id = mod.ModId,
+            Id = mod.ModId.GetValueOrDefault(Guid.Empty),
             Slug = mod.Slug,
         };
         

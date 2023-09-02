@@ -2,7 +2,7 @@
 
 public class AddModsInput
 {
-    public Guid ModId { get; set; } = Guid.Empty;
+    public Guid? ModId { get; set; }
     public string Slug { get; set; } = null!;
     public IEnumerable<PlatformInput> SupportedPlatforms { get; set; } = null!;
 }
